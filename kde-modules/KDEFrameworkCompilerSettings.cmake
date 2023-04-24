@@ -15,16 +15,17 @@ Set stricter compile and link flags for KDE Frameworks modules.
    Do not use this module for software which is not part of KDE-Frameworks.
    There is no guarantee for backward-compatibility in newer versions.
 
-The KDECompilerSettings module is included and, in addition, various
+The :kde-module:`KDECompilerSettings` module is included and, in addition, various
 defines that affect the Qt libraries are set to enforce certain
 conventions.
 
-For example, constructions like QString("foo") are prohibited, instead
+For example, constructions like ``QString("foo")`` are prohibited, instead
 forcing the use of QLatin1String or QStringLiteral, and some
 Qt-defined keywords like signals and slots will not be defined.
 
-NB: it is recommended to include this module with the NO_POLICY_SCOPE
-flag, otherwise you may get spurious warnings with some versions of CMake.
+.. note::
+  It is recommended to include this module with the NO_POLICY_SCOPE
+  flag, otherwise you may get spurious warnings with some versions of CMake.
 
 Since pre-1.0.0.
 #]=======================================================================]
@@ -41,20 +42,25 @@ if (ECM_GLOBAL_FIND_VERSION VERSION_LESS 5.85.0)
     return()
 endif()
 
-# set ENABLE_BSYMBOLICFUNCTIONS default to ON
+# set ENABLE_BSYMBOLICFUNCTIONS default to ON when possible
 # TODO: find a nice way to set an option default
-set(ENABLE_BSYMBOLICFUNCTIONS ON)
+# we can only use symbolic functions when everything is built with that
+# otherwise we'll break function pointer based connects and method lookups
+include(${CMAKE_CURRENT_LIST_DIR}/../modules/QtVersionOption.cmake)
+if (QT_MAJOR_VERSION EQUAL "6")
+    find_package(Qt6Core)
+    set(ENABLE_BSYMBOLICFUNCTIONS ${QT_FEATURE_reduce_relocations})
+else ()
+    set(ENABLE_BSYMBOLICFUNCTIONS ON)
+endif()
 
 # Current defaults
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
-# enable warnings for any deprecated Qt/KF API of current 5 series
-add_definitions(
-    -DQT_DEPRECATED_WARNINGS_SINCE=0x060000
-    -DKF_DEPRECATED_WARNINGS_SINCE=0x060000
-)
-
 # add clang-format target
 include(KDEClangFormat)
-file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES *.cpp *.h *.c)
+file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES *.cpp *.h *.hpp *.c)
 kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
+
+# add the metainfo platform check
+include(KDEMetaInfoPlatformCheck)
