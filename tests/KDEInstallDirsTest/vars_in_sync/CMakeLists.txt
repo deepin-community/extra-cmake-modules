@@ -1,5 +1,5 @@
-project(KDEInstallDirs.vars_in_sync)
 cmake_minimum_required(VERSION 3.5)
+project(KDEInstallDirs.vars_in_sync)
 
 set(ECM_KDE_MODULE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../kde-modules)
 set(ECM_MODULE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../modules)
@@ -26,7 +26,10 @@ foreach(suffix ${var_suffixes})
     endif()
 endforeach()
 
-assert_var_defined(KF5_INSTALL_TARGETS_DEFAULT_ARGS)
+assert_var_defined(KF_INSTALL_TARGETS_DEFAULT_ARGS)
+if (QT_MAJOR_VERSION EQUAL "5")
+    assert_var_defined(KF5_INSTALL_TARGETS_DEFAULT_ARGS)
+endif()
 assert_var_defined(KDE_INSTALL_TARGETS_DEFAULT_ARGS)
 if(NOT KDE_INSTALL_DIRS_NO_CMAKE_VARIABLES AND
    NOT KDE_INSTALL_DIRS_NO_DEPRECATED)

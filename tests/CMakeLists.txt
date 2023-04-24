@@ -9,24 +9,24 @@
 # architecture-dependent locations (like /usr/lib64).
 # We only set this for the tests, making sure it does not interfere
 # with other files (as ECM itself is architecture-independent).
-project(ECMTests C)
+project(ECMTests C CXX)
+include(../modules/QtVersionOption.cmake)
 
-find_package(Qt5LinguistTools CONFIG)
+find_package(Qt${QT_MAJOR_VERSION} COMPONENTS Core LinguistTools Quick CONFIG)
 set_package_properties(
-    Qt5LinguistTools
+    Qt${QT_MAJOR_VERSION}LinguistTools
     PROPERTIES
         URL "https://www.qt.io/"
-        DESCRIPTION "Qt5 linguist tools."
+        DESCRIPTION "Qt linguist tools."
         TYPE OPTIONAL
         PURPOSE "Required to run tests for the ECMPoQmTools module."
 )
 
-find_package(Qt5Core CONFIG)
 set_package_properties(
-    Qt5Core
+    Qt${QT_MAJOR_VERSION}Core
     PROPERTIES
         URL "https://www.qt.io/"
-        DESCRIPTION "Qt5 core library."
+        DESCRIPTION "Qt core library."
         TYPE OPTIONAL
         PURPOSE "Required to run tests for the ECMQtDeclareLoggingCategory module, and for some tests of the KDEInstallDirs module."
 )
@@ -37,12 +37,23 @@ add_subdirectory(ECMGenerateHeadersTest)
 add_subdirectory(ECMSetupVersionTest)
 add_subdirectory(ECMGeneratePkgConfigFile)
 
+if (TARGET Qt6::Core)
+    set(QT_VERSION_OPT "-DBUILD_WITH_QT6=ON")
+else()
+    set(QT_VERSION_OPT "-DBUILD_WITH_QT6=OFF")
+endif()
+
 # a macro for tests that have a simple format where the name matches the
 # directory and project
 macro(add_test_variant NAME BASE COMMAND)
     string(REPLACE "." "/" src_dir "${BASE}")
     string(REPLACE "." "/" build_dir "${NAME}")
     string(REGEX REPLACE "[^.]*\\." "" proj "${NAME}")
+    if (NOT ${NAME}_EXTRA_OPTIONS)
+        set(_build_opts --build-options ${QT_VERSION_OPT})
+    else()
+        set(_build_opts ${${NAME}_EXTRA_OPTIONS} ${QT_VERSION_OPT})
+    endif()
     add_test(${NAME} ${CMAKE_CTEST_COMMAND}
         --build-and-test
         "${CMAKE_CURRENT_SOURCE_DIR}/${src_dir}"
@@ -51,7 +62,7 @@ macro(add_test_variant NAME BASE COMMAND)
         --build-generator ${CMAKE_GENERATOR}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project ${proj}
-        ${${NAME}_EXTRA_OPTIONS}
+        ${_build_opts}
         --test-command ${COMMAND} ${ARGN})
 endmacro()
 macro(add_test_macro NAME)
@@ -115,13 +126,17 @@ set(KDEInstallDirsTest.vars_in_sync_cmake_arg_EXTRA_OPTIONS
 add_test_variant(KDEInstallDirsTest.vars_in_sync_cmake_arg
                  KDEInstallDirsTest.vars_in_sync dummy)
 
-set(KDEInstallDirsTest.vars_in_sync_oldstyle_arg_EXTRA_OPTIONS
-    --build-options -DBIN_INSTALL_DIR=altbin
-                    -DBINDIR_expected_value=altbin
-                    -DCMAKE_WARN_DEPRECATED=TRUE
-    )
-add_test_variant(KDEInstallDirsTest.vars_in_sync_oldstyle_arg
-                 KDEInstallDirsTest.vars_in_sync dummy)
+# KDEInstallDirs6 explicitly sets KDE_INSTALL_DIRS_NO_DEPRECATED to false,
+# hence this test makes no sense in that case
+if(TARGET Qt5::Core)
+    set(KDEInstallDirsTest.vars_in_sync_oldstyle_arg_EXTRA_OPTIONS
+        --build-options -DBIN_INSTALL_DIR=altbin
+                        -DBINDIR_expected_value=altbin
+                        -DCMAKE_WARN_DEPRECATED=TRUE
+        )
+    add_test_variant(KDEInstallDirsTest.vars_in_sync_oldstyle_arg
+                     KDEInstallDirsTest.vars_in_sync dummy)
+endif()
 
 set(KDEInstallDirsTest.relative_or_absolute_usr_EXTRA_OPTIONS
     --build-options -DCMAKE_INSTALL_PREFIX=/usr
@@ -133,7 +148,7 @@ set(KDEInstallDirsTest.relative_or_absolute_usr_EXTRA_OPTIONS
 add_test_variant(KDEInstallDirsTest.relative_or_absolute_usr
                  KDEInstallDirsTest.relative_or_absolute dummy)
 
-if (TARGET Qt5::qmake)
+if (TARGET Qt5::qmake OR TARGET Qt6::Core)
     set(KDEInstallDirsTest.relative_or_absolute_qt_EXTRA_OPTIONS
         --build-options -DCMAKE_INSTALL_PREFIX=/tmp
                         -DKDE_INSTALL_USE_QT_SYS_PATHS=TRUE
@@ -146,7 +161,7 @@ if (TARGET Qt5::qmake)
     add_test_variant(KDEInstallDirsTest.relative_or_absolute_qt
                      KDEInstallDirsTest.relative_or_absolute dummy)
 endif ()
-if (Qt5Core_FOUND)
+if (TARGET Qt${QT_MAJOR_VERSION}::Core)
     set(ECMQtDeclareLoggingCategoryTest_EXTRA_OPTIONS
         --build-target all
         --build-options
@@ -187,7 +202,7 @@ add_test_macro(KDEPackageAppTemplatesTest
     ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/KDEPackageAppTemplatesTest/check.cmake"
 )
 
-if (Qt5Core_FOUND AND Qt5LinguistTools_FOUND)
+if (TARGET Qt${QT_MAJOR_VERSION}::Core AND TARGET Qt${QT_MAJOR_VERSION}::lconvert)
     set(ECMPoQmToolsTest_EXTRA_OPTIONS
         --build-target install
         --build-options
@@ -198,17 +213,60 @@ if (Qt5Core_FOUND AND Qt5LinguistTools_FOUND)
     )
 endif()
 
-find_package(Qt5Quick CONFIG)
 set_package_properties(
-    Qt5Quick
+    Qt${QT_MAJOR_VERSION}Quick
     PROPERTIES
         URL "https://www.qt.io/"
-        DESCRIPTION "Qt5 Quick library."
+        DESCRIPTION "Qt Quick library."
         TYPE OPTIONAL
         PURPOSE "Required to run tests for the ECMQMLModules module."
 )
-if (TARGET Qt5::Quick)
-    add_test_macro(ECMQMLModules dummy)
+if (TARGET Qt${QT_MAJOR_VERSION}::Quick)
+    add_test_macro(ECMFindQmlModule dummy)
+
+    set(ECMQmlModuleTest.static_full_EXTRA_OPTIONS
+        --build-target install
+        --build-options -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/static_full/install
+                        -DBUILD_SHARED_LIBS=OFF
+    )
+    add_test_variant(ECMQmlModuleTest.static_full ECMQmlModuleTest
+        ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/static_full/check.cmake"
+    )
+    set(ECMQmlModuleTest.shared_full_EXTRA_OPTIONS
+        --build-target install
+        --build-options -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/shared_full/install
+                        -DBUILD_SHARED_LIBS=ON
+    )
+    add_test_variant(ECMQmlModuleTest.shared_full ECMQmlModuleTest
+        ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/shared_full/check.cmake"
+    )
+    set(ECMQmlModuleTest.static_qmlonly_EXTRA_OPTIONS
+        --build-target install
+        --build-options -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/static_qmlonly/install
+                        -DBUILD_SHARED_LIBS=OFF
+                        -DQML_ONLY=ON
+    )
+    add_test_variant(ECMQmlModuleTest.static_qmlonly ECMQmlModuleTest
+        ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/static_qmlonly/check.cmake"
+    )
+    set(ECMQmlModuleTest.shared_qmlonly_EXTRA_OPTIONS
+        --build-target install
+        --build-options -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/shared_qmlonly/install
+                        -DBUILD_SHARED_LIBS=ON
+                        -DQML_ONLY=ON
+    )
+    add_test_variant(ECMQmlModuleTest.shared_qmlonly ECMQmlModuleTest
+        ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/shared_qmlonly/check.cmake"
+    )
+    set(ECMQmlModuleTest.shared_depends_EXTRA_OPTIONS
+        --build-target install
+        --build-options -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/shared_depends/install
+                        -DBUILD_SHARED_LIBS=ON
+                        -DDEPENDS=ON
+    )
+    add_test_variant(ECMQmlModuleTest.shared_depends ECMQmlModuleTest
+        ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/ECMQmlModuleTest/shared_depends/check.cmake"
+    )
 endif()
 
 set(ECMConfiguredInstallTest_EXTRA_OPTIONS

@@ -179,7 +179,15 @@ endif()
 # armv7 really doesn't like mixing PIC/PIE code.
 # Since we only have to care about a single compiler,
 # hard-code the values here.
-if (NOT TARGET Threads::Threads)
+# Qt6 fixes this and breaks in nested CMake calls (e.g. try_compile) if we
+# define Threads::Threads here, at least if the "C" language is enabled. In
+# CXX-only projects we still need to do this unconditionally...
+#
+# We cannot use our usual Qt version check at this point though yet,
+# se check whether we are chainloaded by the Qt toolchain as an indicator
+# for Qt6.
+get_property(_languages GLOBAL PROPERTY ENABLED_LANGUAGES)
+if (NOT TARGET Threads::Threads AND (NOT DEFINED __qt_chainload_toolchain_file OR NOT "C" IN_LIST _languages))
     set(Threads_FOUND TRUE)
     set(CMAKE_THREAD_LIBS_INIT "-pthread")
     add_library(Threads::Threads INTERFACE IMPORTED)
@@ -191,6 +199,17 @@ endif()
 set(ANDROID_PLATFORM "android-${CMAKE_ANDROID_API}")
 set(ANDROID_STL ${CMAKE_ANDROID_STL_TYPE})
 include(${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake REQUIRED)
+
+# Export configurable variables for the try_compile() command.
+list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES
+  CMAKE_ANDROID_NDK
+  CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION
+  CMAKE_ANDROID_API
+  CMAKE_ANDROID_ARCH
+  CMAKE_ANDROID_ARCH_ABI
+  ANDROID_SDK_ROOT
+  ANDROID_SDK_COMPILE_API
+)
 
 ## HACK: Remove when we can depend on NDK r23
 # Workaround issue https://github.com/android/ndk/issues/929
@@ -237,6 +256,18 @@ LIST(APPEND CMAKE_FIND_ROOT_PATH ${ECM_ADDITIONAL_FIND_ROOT_PATH})
 set(CMAKE_CXX_LINK_EXECUTABLE
     "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>"
 )
+
+# As our executables are shared libraries, we also need them build with position independent code (PIC).
+# Qt 5 forces that anyway, but in Qt 6 that is no longer the case for exectuables (which we pretend to build here),
+# and so we end up with just PIE (coming from CMake).
+# And as subsequent steps overwrite that setting again, we have to watch for that and redo our change.
+set(CMAKE_CXX_COMPILE_OPTIONS_PIE "-fPIC")
+macro(resetPieOption _var _access)
+    if (${_access} STREQUAL "MODIFIED_ACCESS")
+        set(CMAKE_CXX_COMPILE_OPTIONS_PIE "-fPIC")
+    endif()
+endmacro()
+variable_watch(CMAKE_CXX_COMPILE_OPTIONS_PIE resetPieOption)
 
 set(ECM_DIR "${CMAKE_CURRENT_LIST_DIR}/../cmake" CACHE STRING "")
 

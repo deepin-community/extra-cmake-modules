@@ -4,9 +4,10 @@ Source: https://invent.kde.org/frameworks/extra-cmake-modules
 Upstream-Contact: kde-frameworks-devel@kde.org
 
 Files: *
-Copyright: 2021, Ahmad Samir <a.samirh78@gmail.com>
-           2013, Albert Astals Cid <aacid@kde.org>
-           2013, Aleix Pol <aleixpol@kde.org>
+Copyright: 2021-2022, Ahmad Samir <a.samir78@gmail.com>
+           2021-2022, Ahmad Samir <a.samirh78@gmail.com>
+           2013-2022, Albert Astals Cid <aacid@kde.org>
+           2013-2016, Aleix Pol <aleixpol@kde.org>
            2013-2015, Aleix Pol Gonzalez <aleixpol@blue-systems.com>
            2014-2017, Aleix Pol Gonzalez <aleixpol@kde.org>
            2014, Aleix Pol i Gonzalez <aleixpol@kde.org>
@@ -18,6 +19,7 @@ Copyright: 2021, Ahmad Samir <a.samirh78@gmail.com>
            2006-2012, Alexander Neundorf <neundorf@kde.org>
            2013, Alexander Richardson <arichardson.kde@gmail.com>
            2020, Andreas Cord-Landwehr <cordlandwehr@kde.org>
+           2021, Arjen Hiemstra <ahiemstra@heimr.nl>
            2014, Aurélien Gâteau <agateau@kde.org>
            2014-2019, Christoph Cullmann <cullmann@kde.org>
            2018, Christophe Giboudeaux <christophe@krop.fr>
@@ -56,6 +58,7 @@ Copyright: 2021, Ahmad Samir <a.samirh78@gmail.com>
            2010, Rafael Fernández López <ereslibre@kde.org>
            2014, Ralf Habacker <ralf.habacker@freenet.de>
            2012-2013, Raphael Kubo da Costa <rakuco@FreeBSD.org>
+           2014, Rohan Garg <rohan16garg@gmail.com>
            2016, Shaheed Haque <srhaque@theiet.org>
            2014, Simon Wächter <waechter.simon@gmail.com>
            2012-2016, Stephen Kelly <steveire@gmail.com>
@@ -65,29 +68,33 @@ Copyright: 2021, Ahmad Samir <a.samirh78@gmail.com>
            2018-2021, Volker Krause <vkrause@kde.org>
 License: BSD-3-Clause
 
-Files: .gitlab-ci.yml
-Copyright: 2020, Volker Krause <vkrause@kde.org>
-License: CC0-1.0
- On Debian systems, the full text of the Creative Commons CC0 1.0
- Universal license can be found in the file
- `/usr/share/common-licenses/CC0-1.0’.
-
 Files: find-modules/FindInotify.cmake
 Copyright: 2017, Adriaan de Groot <groot@kde.org>
            2016, Tobias C. Berner <tcberner@FreeBSD.org>
 License: BSD-2-Clause
 
-Files: Jenkinsfile_master_kf5-qt5_linux_gcc
-       kde-modules/clang-format.cmake
-Copyright: 2019, Christoph Cullmann <cullmann@kde.org>
-           2019, Gernot Gebhard <gebhard@absint.com>
-License: MIT
+Files: .gitlab-ci.yml
+       .kde-ci.yml
+       modules/ECMQmlModule.cpp.in
+       modules/ECMQmlModule.h.in
+       tests/ECMQmlModuleTest/qmldir_expected_depends
+       tests/ECMQmlModuleTest/qmldir_expected_full
+       tests/ECMQmlModuleTest/qmldir_expected_qmlonly
+Copyright: 2021, Arjen Hiemstra <ahiemstra@heimr.nl>
+           None
+           2020, Volker Krause <vkrause@kde.org>
+License: CC0-1.0
 
 Files: toolchain/generate-fastlane-metadata.py
 Copyright: 2018-2020, Aleix Pol Gonzalez <aleixpol@kde.org>
            2019-2020, Ben Cooksley <bcooksley@kde.org>
            2020, Volker Krause <vkrause@kde.org>
 License: GPL-2.0-or-later
+
+Files: kde-modules/clang-format.cmake
+Copyright: 2019, Christoph Cullmann <cullmann@kde.org>
+           2019, Gernot Gebhard <gebhard@absint.com>
+License: MIT
 
 Files: debian/*
 Copyright: 2014, Jonathan Riddell <jriddell@ubuntu.com>
@@ -139,6 +146,19 @@ License: BSD-3-Clause
  THEORY OF LIABILITY WHETHER IN CONTRACT STRICT LIABILITY OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+License: CC0-1.0
+ To the extent possible under law, the author(s) have dedicated all
+ copyright and related and neighboring rights to this software to the
+ public domain worldwide. This software is distributed without any
+ warranty.
+ .
+ You should have received a copy of the CC0 Public Domain Dedication
+ along with this software. If not, see
+ <https://creativecommons.org/publicdomain/zero/1.0/>.
+ .
+ On Debian systems, the complete text of the CC0 Public Domain
+ Dedication can be found in `/usr/share/common-licenses/CC0-1.0’.
 
 License: GPL-2.0-or-later
  This package is free software; you can redistribute it and/or modify

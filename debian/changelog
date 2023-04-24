@@ -1,10 +1,107 @@
-extra-cmake-modules (5.90.0-1) UNRELEASED; urgency=medium
+extra-cmake-modules (5.103.0-1) unstable; urgency=medium
 
-  * update
+  [ Aurélien COUDERC ]
+  * New upstream release (5.103.0).
+  * Update build-deps and deps with the info from cmake.
 
- -- Debian Qt/KDE Maintainers <debian-qt-kde@lists.debian.org>  Thu, 21 Apr 2022 21:12:03 +0800
+ -- Aurélien COUDERC <coucouf@debian.org>  Sun, 12 Feb 2023 21:44:20 +0100
 
-extra-cmake-modules (5.90.0-1) experimental; urgency=medium
+extra-cmake-modules (5.102.0-1) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * New upstream release (5.102.0).
+  * Bump Standards-Version to 4.6.2, no change required.
+  * Refresh patches.
+  * Refresh copyright information.
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Sun, 22 Jan 2023 21:34:58 +0100
+
+extra-cmake-modules (5.101.0-1) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * New upstream release (5.101.0).
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Tue, 13 Dec 2022 07:40:18 +0100
+
+extra-cmake-modules (5.100.0-1) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * Drop patch add_hurd_as_supported_platform.diff, it should not be
+    needed anymore now that we demoted the unsupported platforms error
+    to a warning.
+  * New upstream release (5.99.0).
+  * New upstream release (5.100.0).
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Sat, 19 Nov 2022 23:18:54 +0100
+
+extra-cmake-modules (5.98.0-2) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * Add patch to demote unsupported platform error to a warning so
+    upstream unsupported platforms like Hurd can build in Debian without
+    additional hacks.
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Wed, 05 Oct 2022 13:46:03 +0200
+
+extra-cmake-modules (5.98.0-1) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * New upstream release (5.98.0).
+  * Add patch to re-add Hurd as a supported platform. It was lost when
+    upstream defined the concept of supported platforms but was
+    previously building fine in Debian.
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Sun, 18 Sep 2022 23:11:32 +0200
+
+extra-cmake-modules (5.97.0-1) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * New upstream release (5.97.0).
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Sun, 14 Aug 2022 18:55:24 +0200
+
+extra-cmake-modules (5.96.0-1) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * New upstream release (5.96.0).
+  * Bump Standards-Version to 4.6.1, no change required.
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Sun, 31 Jul 2022 13:32:53 +0200
+
+extra-cmake-modules (5.94.0-3) unstable; urgency=medium
+
+  [ Patrick Franz ]
+  * Team upload.
+  * Drop patch to disable fatal warnings as the issue has been fixed in
+    binutils.
+
+ -- Patrick Franz <deltaone@debian.org>  Thu, 30 Jun 2022 19:38:55 +0200
+
+extra-cmake-modules (5.94.0-2) unstable; urgency=medium
+
+  [ Patrick Franz ]
+  * Team upload.
+  * Add patch to disable fatal warnings as this makes many KDE fail to
+    compile on MIPS.
+
+ -- Patrick Franz <deltaone@debian.org>  Tue, 21 Jun 2022 19:51:59 +0200
+
+extra-cmake-modules (5.94.0-1) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * New upstream release (5.94.0).
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Thu, 19 May 2022 23:59:01 +0200
+
+extra-cmake-modules (5.93.0-1) unstable; urgency=medium
+
+  [ Aurélien COUDERC ]
+  * New upstream release (5.92.0).
+  * New upstream release (5.93.0).
+
+ -- Aurélien COUDERC <coucouf@debian.org>  Wed, 11 May 2022 23:22:42 +0200
+
+extra-cmake-modules (5.90.0-1) unstable; urgency=medium
 
   [ Norbert Preining ]
   * New upstream release (5.89.0).
