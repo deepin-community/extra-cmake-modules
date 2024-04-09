@@ -32,16 +32,19 @@ import zipfile
 # see https://developer.android.com/guide/topics/resources/multilingual-support#resource-resolution-examples
 languageMap = {
     None: "en-US",
+    "ast": None, # not supported by Google Play for meta data
     "ca-valencia": None, # not supported by Android
     "cs": "cs-CZ",
     "de": "de-DE",
+    "eo": None, # neither supported by Android nor by Google Play for meta data
     "es": "es-ES",
     "eu": "eu-ES",
     "fi": "fi-FI",
     "fr": "fr-FR",
     "gl": "gl-ES",
-    "ia": None, # not supported by Android
+    "ia": None, # not supported by Google Play for meta data
     "it": "it-IT",
+    "ka": "ka-GE",
     "ko": "ko-KR",
     "nl": "nl-NL",
     "pl": "pl-PL",
@@ -50,6 +53,7 @@ languageMap = {
     "sr": "sr-Cyrl-RS",
     "sr@latin": "sr-Latn-RS",
     "sv": "sv-SE",
+    "tr": "tr-TR",
     'x-test': None
 }
 

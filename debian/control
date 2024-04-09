@@ -3,13 +3,12 @@ Section: devel
 Priority: optional
 Maintainer: Debian Qt/KDE Maintainers <debian-qt-kde@lists.debian.org>
 Uploaders: Aurélien COUDERC <coucouf@debian.org>,
-           Norbert Preining <norbert@preining.info>,
+           Patrick Franz <deltaone@debian.org>,
 Build-Depends: cmake (>= 3.16~),
                debhelper-compat (= 13),
                libjs-jquery (>= 3.5.1+dfsg-3) <!nodoc>,
                libjs-underscore <!nodoc>,
-               pkg-kde-tools (>= 0.15.16~),
-               python3-distutils <!nodoc>,
+               pkg-kde-tools (>= 0.17.0~),
                python3-setuptools <!nodoc>,
                python3-sphinx (>= 1.2~) <!nodoc>,
                python3-sphinxcontrib.qthelp <!nodoc>,
@@ -24,7 +23,7 @@ Vcs-Git: https://salsa.debian.org/qt-kde-team/kde/extra-cmake-modules.git
 Package: extra-cmake-modules
 Architecture: any
 Depends: ${misc:Depends},
-Suggests: qt5-qmake, qtbase5-dev,
+Suggests: qt6-base-dev,
 Description: Extra modules and scripts for CMake
  Extra CMake Modules, or ECM, aims to augment CMake with additional modules. It
  serves as both a staging ground for new modules before they are moved upstream
@@ -48,7 +47,7 @@ Built-Using: ${sphinxdoc:Built-Using},
 Depends: ${misc:Depends}, ${sphinxdoc:Depends},
 Breaks: extra-cmake-modules (<< 5.74.0-1),
 Replaces: extra-cmake-modules (<< 5.74.0-1),
-Description: Extra modules and scripts for CMake
+Description: Extra modules and scripts for CMake - documentation
  Extra CMake Modules, or ECM, aims to augment CMake with additional modules. It
  serves as both a staging ground for new modules before they are moved upstream
  to CMake and a place for modules that, for whatever reason, are not a good fit
