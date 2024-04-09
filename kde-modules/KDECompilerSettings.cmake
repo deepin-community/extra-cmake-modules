@@ -342,10 +342,19 @@ if (WIN32)
     # See http://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx
     _kde_add_platform_definitions(-DWIN32_LEAN_AND_MEAN)
 
-    # Target Windows Vista
-    # This enables various bits of new API
-    # See http://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx
-    _kde_add_platform_definitions(-D_WIN32_WINNT=0x0600 -DWINVER=0x0600 -D_WIN32_IE=0x0600)
+    if (KDE_INTERNAL_COMPILERSETTINGS_LEVEL VERSION_GREATER_EQUAL 5.240.0 OR QT_MAJOR_VERSION STREQUAL "6")
+        # Target Windows 10
+        # This enables various bits of new API
+        # See http://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx
+        # Windows 10 is the default by Qt6 hence we do not need the next line, but we keep it disabled
+        # to not to start from scratch in case we want to target a different version in the future
+        # _kde_add_platform_definitions(-D_WIN32_WINNT=0x0A00 -DWINVER=0x0A00 -D_WIN32_IE=0x0A00)
+    else()
+        # Target Windows Vista
+        # This enables various bits of new API
+        # See http://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx
+        _kde_add_platform_definitions(-D_WIN32_WINNT=0x0600 -DWINVER=0x0600 -D_WIN32_IE=0x0600)
+    endif()
 
     # Use the Unicode versions of Windows API by default
     # See http://msdn.microsoft.com/en-us/library/windows/desktop/dd317766%28v=vs.85%29.aspx
@@ -540,9 +549,16 @@ if ((CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT APPLE) OR
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--fatal-warnings ${CMAKE_SHARED_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--fatal-warnings ${CMAKE_MODULE_LINKER_FLAGS}")
 
+    string(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" compileflags)
+    if("${CMAKE_CXX_FLAGS} ${${compileflags}}" MATCHES "-fsanitize")
+        set(sanitizers_enabled TRUE)
+    else()
+        set(sanitizers_enabled FALSE)
+    endif()
+
     # Do not allow undefined symbols, even in non-symbolic shared libraries
     # On OpenBSD we must disable this to allow the stuff to properly compile without explicit libc specification
-    if (NOT CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+    if (NOT CMAKE_SYSTEM_NAME MATCHES "OpenBSD" AND (NOT sanitizers_enabled OR NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
         set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined ${CMAKE_SHARED_LINKER_FLAGS}")
         set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined ${CMAKE_MODULE_LINKER_FLAGS}")
     endif()
@@ -567,6 +583,10 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
     if (KDE_INTERNAL_COMPILERSETTINGS_LEVEL VERSION_GREATER_EQUAL 5.96.0)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=undef")
     endif()
+elseif(MSVC)
+  # similar to -Werror=return-type
+  # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4715?view=msvc-170
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /we4715")
 endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR
     (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 3.5))
@@ -599,7 +619,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Intel" AND NOT WIN32)
 endif()
 
 if (MSVC)
-    # FIXME: do we not want to set the warning level up to level 3? (/W3)
+    # enable linter like warnings including deprecation warnings
+    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
     # Disable warnings:
     # C4250: 'class1' : inherits 'class2::member' via dominance
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4250")
