@@ -68,6 +68,8 @@ Multiple templates can be passed at once.
 Since 5.18
 #]=======================================================================]
 
+include(CMakeParseArguments)
+
 function(kde_package_app_templates)
     set(_oneValueArgs INSTALL_DIR)
     set(_multiValueArgs TEMPLATES)

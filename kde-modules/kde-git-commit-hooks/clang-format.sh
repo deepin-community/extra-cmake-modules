@@ -2,12 +2,7 @@
 
 # Based on okular/hooks/pre-commit, credits go to Albert Astals Cid
 
-clang_format_major_version=@KDE_CLANG_FORMAT_MAJOR_VERSION@
-if [[ ${clang_format_major_version:-1} -ge 14 ]]; then
-    readonly output=$(git clang-format --staged --extensions 'cpp,h,hpp,c' -v --diff)
-else
-    readonly output=$(git clang-format --extensions 'cpp,h,hpp,c' -v --diff)
-fi
+readonly output=$(git clang-format --extensions 'cpp,h,hpp,c' -v --diff)
 
 if [[ ! -f .clang-format ]]; then
     if [[ @HAS_CLANG_FORMAT_COMMAND_INCLUDED@ = TRUE ]]; then
@@ -24,11 +19,6 @@ if [[ "$output" == *"no modified files to format"* ]]; then exit 0; fi
 if [[ "$output" == *"clang-format did not modify any files"* ]]; then exit 0; fi
 
 echo "ERROR: You have unformatted changes, please format your files. You can do this using the following commands:"
-if [[ ${clang_format_major_version:-1} -ge 14 ]]; then
-    echo "       git clang-format --staged --extensions 'cpp,h,hpp,c' # format the changed parts"
-    echo "       git clang-format --staged --extensions 'cpp,h,hpp,c' --diff # preview the changes done by the formatter"
-else
-    echo "       git clang-format --extensions 'cpp,h,hpp,c' --force # format the changed parts"
-    echo "       git clang-format --extensions 'cpp,h,hpp,c' --diff # preview the changes done by the formatter"
-fi
+echo "       git clang-format --extensions 'cpp,h,hpp,c' --force # format the changed parts"
+echo "       git clang-format --extensions 'cpp,h,hpp,c' --diff # preview the changes done by the formatter"
 exit 1

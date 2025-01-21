@@ -1,7 +1,3 @@
-# Ignore generated cmake files
-cmake/ECMConfig.cmake
-cmake/ECMConfigVersion.cmake
-
 # Ignore the following files
 *~
 *.[oa]
@@ -23,11 +19,9 @@ random_seed
 /build*/
 /cmake-build*/
 .idea
-/.vscode/
 CMakeLists.txt.user*
 *.unc-backup*
 __pycache__
 .cmake/
 /compile_commands.json
 /.clang-format
-/Testing

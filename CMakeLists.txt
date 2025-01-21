@@ -11,12 +11,23 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 # Preliminary setup
 #
 
-set(VERSION "6.1.0") # handled by release scripts
+set(VERSION "5.103.0") # handled by release scripts
 
-project(ECM
-    VERSION "${VERSION}"
-    LANGUAGES NONE
-)
+if (POLICY CMP0048)
+    cmake_policy(SET CMP0048 NEW)
+    project(ECM
+        VERSION "${VERSION}"
+        LANGUAGES NONE
+    )
+else()
+    project(ECM NONE)
+    include("${CMAKE_SOURCE_DIR}/modules/ECMSetupVersion.cmake")
+    ecm_setup_version(
+        "${VERSION}"
+        VARIABLE_PREFIX ECM
+    )
+endif()
+
 
 #
 # Includes

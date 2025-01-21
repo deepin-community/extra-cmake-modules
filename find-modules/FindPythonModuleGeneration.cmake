@@ -300,6 +300,8 @@ endif()
 
 set(PythonModuleGeneration_FOUND TRUE)
 
+include(CMakeParseArguments)
+
 set(GPB_MODULE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 function(_compute_implicit_include_dirs)

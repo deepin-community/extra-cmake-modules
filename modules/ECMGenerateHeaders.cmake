@@ -118,6 +118,8 @@ Example usage (with ``PREFIX``):
 Since pre-1.0.0.
 #]=======================================================================]
 
+include(CMakeParseArguments)
+
 function(ECM_GENERATE_HEADERS camelcase_forwarding_headers_var)
     set(options)
     set(oneValueArgs ORIGINAL HEADER_EXTENSION OUTPUT_DIR PREFIX REQUIRED_HEADERS COMMON_HEADER RELATIVE)
@@ -176,8 +178,7 @@ function(ECM_GENERATE_HEADERS camelcase_forwarding_headers_var)
         endif()
 
         set(_actualheader "${CMAKE_CURRENT_SOURCE_DIR}/${EGH_RELATIVE}${originalbasename}.${EGH_HEADER_EXTENSION}")
-        get_source_file_property(_generated "${_actualheader}" GENERATED)
-        if (NOT _generated AND NOT EXISTS ${_actualheader})
+        if (NOT EXISTS ${_actualheader})
             message(FATAL_ERROR "Could not find \"${_actualheader}\"")
         endif()
 

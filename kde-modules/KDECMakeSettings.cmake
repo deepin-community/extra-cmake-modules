@@ -131,12 +131,12 @@ if(NOT KDE_SKIP_RPATH_SETTINGS)
    endif()
 
    if (NOT IS_ABSOLUTE "${_abs_LIB_INSTALL_DIR}")
-      set(_abs_LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${_abs_LIB_INSTALL_DIR}")
+      set(_abs_LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}")
    endif()
 
    if (UNIX)
-      # for macOS: add install name dir in addition
-      # check: is the rpath stuff below really required on macOS? at least it seems so to use a stock qt from qt.io
+      # for mac os: add install name dir in addition
+      # check: is the rpath stuff below really required on mac os? at least it seems so to use a stock qt from qt.io
       if (APPLE)
          set(CMAKE_INSTALL_NAME_DIR ${_abs_LIB_INSTALL_DIR})
       endif ()
@@ -160,14 +160,12 @@ endif()
 
 find_program(APPSTREAMCLI appstreamcli)
 function(appstreamtest)
-    cmake_policy(PUSH)
-    cmake_policy(SET CMP0064 NEW) # enable TEST operator
-    if(APPSTREAMCLI AND NOT TEST appstreamtest)
+    if(APPSTREAMCLI AND NOT appstreamtest_added)
+        set(appstreamtest_added TRUE PARENT_SCOPE)
         add_test(NAME appstreamtest COMMAND ${CMAKE_COMMAND} -DAPPSTREAMCLI=${APPSTREAMCLI} -DINSTALL_FILES=${CMAKE_BINARY_DIR}/install_manifest.txt -P ${CMAKE_CURRENT_LIST_DIR}/appstreamtest.cmake)
     else()
         message(STATUS "Could not set up the appstream test. appstreamcli is missing.")
     endif()
-    cmake_policy(POP)
 endfunction()
 
 if(NOT KDE_SKIP_TEST_SETTINGS)

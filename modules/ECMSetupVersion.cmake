@@ -142,7 +142,7 @@ function(ecm_setup_version _version)
         string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.0*([0-9]+).*" "\\1" _patch "${_version}")
     endif()
 
-    if(NOT DEFINED ESV_SOVERSION) # use DEFINED, so "0" as valid SO version is not evaluated to FALSE
+    if(NOT ESV_SOVERSION)
         set(ESV_SOVERSION ${_major})
     endif()
 

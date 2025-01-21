@@ -78,14 +78,10 @@ include("${ECM_MODULE_DIR}/ECMQueryQt.cmake")
 
 ecm_find_package_version_check(QtWaylandScanner)
 
-if (QT_MAJOR_VERSION STREQUAL "5")
-    ecm_query_qt(qtwaylandscanner_dir QT_HOST_BINS)
-else()
-    ecm_query_qt(qtwaylandscanner_dir QT_HOST_LIBEXECS)
-endif()
+ecm_query_qt(qt_binaries_dir QT_HOST_BINS)
 
 # Find qtwaylandscanner
-find_program(QtWaylandScanner_EXECUTABLE NAMES qtwaylandscanner HINTS ${qtwaylandscanner_dir})
+find_program(QtWaylandScanner_EXECUTABLE NAMES qtwaylandscanner HINTS ${qt_binaries_dir})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(QtWaylandScanner
@@ -109,6 +105,9 @@ set_package_properties(QtWaylandScanner PROPERTIES
     URL "https://qt.io/"
     DESCRIPTION "Executable that converts XML protocol files to C++ code"
 )
+
+
+include(CMakeParseArguments)
 
 function(ecm_add_qtwayland_client_protocol target_or_sources_var)
     # Parse arguments
